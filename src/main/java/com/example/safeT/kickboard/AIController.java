@@ -1,5 +1,6 @@
 package com.example.safeT.kickboard;
 
+import com.example.safeT.kickboard.AIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ public class AIController {
     private AIService aiService;
 
     // 얼굴 인식 요청 처리
-    @PostMapping("/face-recognition")
+    @GetMapping("/face-recognition")
     public ResponseEntity<String> faceRecognition(@RequestParam String userId) {
         try {
             String result = aiService.sendUserIdToPython(userId);
@@ -23,7 +24,7 @@ public class AIController {
     }
 
     // 헬멧 감지 요청 처리
-    @PostMapping("/helmet-detection")
+    @GetMapping("/helmet-detection")
     public ResponseEntity<String> helmetDetection(@RequestParam String userId) {
         try {
             String result = aiService.detectHelmet(userId);
@@ -34,7 +35,8 @@ public class AIController {
     }
 
     // 2인 이상 탑승 감지 요청 처리
-    @PostMapping("/people-detection")
+
+    @GetMapping("/people-detection")
     public ResponseEntity<String> peopleDetection(@RequestParam String userId) {
         try {
             String result = aiService.detectPeople(userId);
@@ -45,7 +47,7 @@ public class AIController {
     }
 
     // 횡단보도 감지 요청 처리
-    @PostMapping("/crosswalk-detection")
+    @GetMapping("/crosswalk-detection")
     public ResponseEntity<String> crosswalkDetection(@RequestParam String userId) {
         try {
             String result = aiService.detectCrosswalk(userId);
