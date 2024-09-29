@@ -6,7 +6,7 @@ import pandas as pd
 import os
 import time
 import requests
-from s3 import s3_connection, upload_to_s3
+from s3 import s3_connection, upload_to_s3, download_from_s3
 import secret_key
 
 app = Flask(__name__)
@@ -18,8 +18,19 @@ def detect_face(user_id):
     s3_client = s3_connection(AWS_ACCESS_KEY, AWS_SECRET_KEY)
 
     use_camera = False  # False면 img, True면 camera
-    csv_filename = "C:/safeT/ai_integration/Face_Recogniton/face_rec_data/face_features.csv"
-    df = pd.read_csv(csv_filename)
+    csv_filename = 'face_features.csv'
+    local_csv_path = os.path.join('temp', csv_filename)  # CSV 파일 다운로드 위치 설정
+
+    # temp 폴더가 없으면 생성
+    if not os.path.exists('temp'):
+        os.makedirs('temp')  # temp 폴더 생성
+
+    # S3에서 CSV 파일 다운로드
+    if download_from_s3(S3_BUCKET_NAME, csv_filename, local_csv_path, s3_client):  # CSV 파일 다운로드
+        df = pd.read_csv(local_csv_path)  # 다운로드 한 CSV 파일 읽기
+    else:
+        return {"error": "Failed to download CSV file from S3"}, 500
+
     saved_encodings = df.values
 
     result_dir = 'face_rec_results'
