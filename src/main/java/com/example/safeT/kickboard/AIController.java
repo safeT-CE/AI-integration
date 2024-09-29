@@ -1,9 +1,10 @@
 package com.example.safeT.kickboard;
 
-import com.example.safeT.kickboard.AIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/ai")
@@ -14,46 +15,33 @@ public class AIController {
 
     // 얼굴 인식 요청 처리
     @GetMapping("/face-recognition")
-    public ResponseEntity<String> faceRecognition(@RequestParam String userId) {
-        try {
-            String result = aiService.sendUserIdToPython(userId);
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
-        }
+    public CompletableFuture<ResponseEntity<String>> faceRecognition(@RequestParam String userId) {
+        return aiService.sendUserIdToPython(userId)
+                .thenApply(result -> ResponseEntity.ok(result))
+                .exceptionally(e -> ResponseEntity.status(500).body("An error occurred: " + e.getMessage()));
     }
 
     // 헬멧 감지 요청 처리
     @GetMapping("/helmet-detection")
-    public ResponseEntity<String> helmetDetection(@RequestParam String userId) {
-        try {
-            String result = aiService.detectHelmet(userId);
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
-        }
+    public CompletableFuture<ResponseEntity<String>> helmetDetection(@RequestParam String userId) {
+        return aiService.detectHelmet(userId)
+                .thenApply(result -> ResponseEntity.ok(result))
+                .exceptionally(e -> ResponseEntity.status(500).body("An error occurred: " + e.getMessage()));
     }
 
     // 2인 이상 탑승 감지 요청 처리
-
     @GetMapping("/people-detection")
-    public ResponseEntity<String> peopleDetection(@RequestParam String userId) {
-        try {
-            String result = aiService.detectPeople(userId);
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
-        }
+    public CompletableFuture<ResponseEntity<String>> peopleDetection(@RequestParam String userId) {
+        return aiService.detectPeople(userId)
+                .thenApply(result -> ResponseEntity.ok(result))
+                .exceptionally(e -> ResponseEntity.status(500).body("An error occurred: " + e.getMessage()));
     }
 
     // 횡단보도 감지 요청 처리
     @GetMapping("/crosswalk-detection")
-    public ResponseEntity<String> crosswalkDetection(@RequestParam String userId) {
-        try {
-            String result = aiService.detectCrosswalk(userId);
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
-        }
+    public CompletableFuture<ResponseEntity<String>> crosswalkDetection(@RequestParam String userId) {
+        return aiService.detectCrosswalk(userId)
+                .thenApply(result -> ResponseEntity.ok(result))
+                .exceptionally(e -> ResponseEntity.status(500).body("An error occurred: " + e.getMessage()));
     }
 }
